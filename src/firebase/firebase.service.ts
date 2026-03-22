@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import * as config from './config.json';
 import * as firebase from 'firebase-admin';
 
 
@@ -7,9 +6,12 @@ import * as firebase from 'firebase-admin';
 export class FirebaseService {
   firebaseConfig;
   constructor() {
-    const firebaseConfig: any = config;
     firebase.initializeApp({
-      credential: firebase.credential.cert(firebaseConfig),
+      credential: firebase.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        privateKey: (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      }),
     });
   }
   app() {

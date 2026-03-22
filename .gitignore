@@ -41,3 +41,6 @@ lerna-debug.log*
 
 # Claude Code
 .claude/
+
+# Firebase credentials
+src/firebase/config.json

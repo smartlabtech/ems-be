@@ -1,0 +1,39 @@
+{
+  "short_name": "Sidehustle Pro",
+  "name": "Sidehustle Pro",
+  "icons": [
+    {
+      "src": "./icons/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "./icons/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "./icons/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./screenshots/desktop-view.png",
+      "sizes": "1200x800",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "./screenshots/mobile-view.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

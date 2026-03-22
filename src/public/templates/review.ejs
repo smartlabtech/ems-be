@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Review</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      let rating, comment;
+      const id = window.location.href.split('/review/')[1].split('/')[0];
+      const token = window.location.href.split('/review/')[1].split('/')[1];
+      let handleChange = () => {
+        setTimeout(() => {
+          rating = $('input[name="stars"]:checked').val();
+          comment = $('textregion').val();
+          if (rating) {
+            $('button').prop('disabled', false);
+          } else {
+            $('button').prop('disabled', true);
+          }
+        }, 0);
+      };
+      let submit = () => {
+        if (rating) {
+          $.ajax({
+            type: 'PATCH',
+            url: window.location.href,
+            data: JSON.stringify({
+              rating: parseInt(rating),
+              comment,
+            }),
+            processData: false,
+            // contentType: 'application/merge-patch+json',
+            contentType: 'application/json',
+            success: function(data) {
+              document.getElementById('form').style.display = 'none';
+              document.getElementById('header').style.display = 'none';
+              document.getElementById('success').style.display = 'block';
+            },
+          });
+        }
+      };
+    </script>
+  </head>
+
+  <body>
+    <div id="header">
+      <div style="border-radius: 50%;">
+        <img
+          style="border-radius: 50%; width: 120px; height: 120px;"
+          src="<%= user.profileImage || 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wgARCADAAMADASIAAhEBAxEB/8QAGgABAAMBAQEAAAAAAAAAAAAAAAEEBQYDAv/EABQBAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhADEAAAAeuAAAAAAAAAAAARIAAAAAAAAAAAAAAAmzsGX76IzvDYHN/PR5BTAAAAAAAs1t89pAABEjDq9DzwAAAAAB7dBi7QAAAAwd7HKIAAAAALe3zfRkgAAAYu1zp5gAAQkiQAa2TJ0qtZAABXPHH+vkAAARMCYkAGiUt30kAA8sLooOaaOcAAARKCUSDWPu6AAAACldHMtbJAAEJIkLe34+wAAAAAAxNvxOfAAiYFuprmgAAAAAAADCra2SARKCd7A6Q+wAAAAAAAV8HpObAP/8QAJRAAAQQBBAEEAwAAAAAAAAAAAQIDEjAEABEgQCEQFCIzIzFg/9oACAEBAAEFAv6kAnScZR17Ua9qNKxlDRBHSZZK9JSEjgpIUHmSjoMNzV+qH24KuZRBFDqZotZEnasgbO2Yn21Zn2WYv3VZZ/LYgxUPIpcMl24rm4oynIpuB2LLocHJ1wNhRKjegKJblHguUXAoG9rH0AAORG4dx7mGYVvszsxmthZktbinHbmq7IbguhlMEXPJmjnjJk70MhMXeWGPj0MwfHkwNmug+N2uSfCegryn1//EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQMBAT8BEP/EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQIBAT8BEP/EACUQAAECBgICAgMAAAAAAAAAAAERMAACICExQCJhEjJRkWBxgf/aAAgBAQAGPwL8ptF7ReYx7GLXi40lNpYSUU8hCi8uh0zbBfAZIelDZd/jY/To2AWyXvE5DPiMl9RHdfcKdDhmOaLTwRY550Fn+otXeFk+nlPs2o9nPKbLvkMtKcB+2CyA+QwOtE91k6IPxXLozVjRNH//xAApEAEAAQMDAwMDBQAAAAAAAAABEQAhMDFRYSBAQXGBoVBgsZHB0fDx/9oACAEBAAE/IfulmCrxWtT50fwinw0alPhTsMPPZI+4b1bw6YtIV/mp2Gp6daAAFjrSSGr9wuM+4mrhFH29aSG+uX1wnHD/AA3+ipFHIRjkhsRl4VZpAJo3wrBLXLbm9pj0w/0QM7EkJWwDqdd838ClK3ewPwYeTxX7KdN9+oqzbLy5y9TeGkSAHHWUQE5qKbpTTICsBLQDX/DGA0/ypEUSHHBFfpxlkjt157mSvGFbqec+6njBcGl3Y2xpd1w79jsZd+jri3E9jBuJ6zA2OxEHc6P/2gAMAwEAAgADAAAAEAAAAAAAAAAAACAAAAAAAAAAAAAAAHHPAAAAAAAABPPPPIAAAAAAPPPPPPAAAAAAGPPPPMAAAGIABNPPPAAAAFKABJPPOCAAAJCFPPPPPPKAAGIBPPPPPPKAAFKMPPPPPPPIAJHPPPPPPPPIAP/EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQMBAT8QEP/EABQRAQAAAAAAAAAAAAAAAAAAAHD/2gAIAQIBAT8QEP/EACkQAAECAwcEAwEBAAAAAAAAAAEAESEx8BAgMEFhcZFRgaHBQLHR4fH/2gAIAQEAAT8Q+cyZMmTJkyZMmTJkyZMmTJsep21O2p21NCaN6p21O5UralbUrakgjgaLqB1EwWsXiHlCCK2AfqNEJuAfxDHH9Jj68o/6ZBP9tqdtTtqaCN6pIacAd2z9TfA5tM7m3lcooE1stkQL3Uz3aa4NSQvFhCGSYh2QywAMAMr4DABBgQVDgk3c6H0qlbUralYLu0yhNoeO7ghYDkOXTIUQggD7GALoi0oj6Rw2qmN70b9SQug+oEfrDBiCZH7NtStqVguhEOZ4P6w4Sy/sfzAF0gJ4XY8kUMEAA4ICEAAiSpqtC2l6GHU7YnwM88FECeDp/UsDO+/wTgoFEAv6jRcrlc3C4sKN1PtDR/BpiVK4ciZEDuMggEARdfTrdyirgjE7kAdjLFqdgEgACSS3VyigHwMhn3QQOpAL5Ye5gHRRdzCc+3VEEiCCCDHKN/O6JnEgAB4QcEE0htXK5XK5XN4qCAaQ3oyIBIIMI4VSQoQMByYo4RMAyYUJHZJ1OQ9nGyQmpoo0OY9/5dztAJIAcl+UHpt95s5XK5XK5XOAHfe8SRBBIILgsdL8GHje0vgvQGhffm+6E2mwo/BZSbrY/wCC5nbkkS53j7t5XK5XK5XODpl4I+r+i4PHwddUci5//9k=' %>"
+          class="image--cover"
+        />
+        <p style="font-size: 24px; font-weight: bold; margin:0;">
+          <%= user.firstName %> <%= user.lastName %>
+        </p>
+        <% if(user.rating){ %>
+        <p style="font-size: 20px; font-weight: bold; margin:0;">
+          <%= lang === 'ar' ? 'التقييم:' : 'Rate:' %> <%= user.rating %>
+        </p>
+        <% } %>
+      </div>
+    </div>
+    <div id="form">
+      <div style="position: relative; height: 100px;">
+        <input
+          type="radio"
+          value="0"
+          name="stars"
+          id="star-null"
+          style="visibility: hidden;"
+          onchange="handleChange({star:1})"
+        />
+        <input
+          type="radio"
+          value="1"
+          name="stars"
+          id="star-1"
+          style="visibility: hidden;"
+          onchange="handleChange({star:1})"
+        />
+        <input
+          type="radio"
+          value="2"
+          name="stars"
+          id="star-2"
+          style="visibility: hidden;"
+          onchange="handleChange({star:2})"
+        />
+        <input
+          type="radio"
+          value="3"
+          name="stars"
+          id="star-3"
+          style="visibility: hidden;"
+          onchange="handleChange({star:3})"
+        />
+        <input
+          type="radio"
+          value="4"
+          name="stars"
+          id="star-4"
+          style="visibility: hidden;"
+          onchange="handleChange({star:4})"
+        />
+        <input
+          type="radio"
+          value="5"
+          name="stars"
+          id="star-5"
+          style="visibility: hidden;"
+          onchange="handleChange({star:5})"
+        />
+        <section>
+          <label for="star-1">
+            <svg width="255" height="240" viewBox="0 0 51 48">
+              <path d="m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z" />
+            </svg>
+          </label>
+          <label for="star-2">
+            <svg width="255" height="240" viewBox="0 0 51 48">
+              <path d="m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z" />
+            </svg>
+          </label>
+          <label for="star-3">
+            <svg width="255" height="240" viewBox="0 0 51 48">
+              <path d="m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z" />
+            </svg>
+          </label>
+          <label for="star-4">
+            <svg width="255" height="240" viewBox="0 0 51 48">
+              <path d="m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z" />
+            </svg>
+          </label>
+          <label for="star-5">
+            <svg width="255" height="240" viewBox="0 0 51 48">
+              <path d="m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z" />
+            </svg>
+          </label>
+        </section>
+      </div>
+      <textregion
+        style="border-radius: 10px; resize: none; height: 160px; width: calc(75% - 16px);"
+        onKeyPress="handleChange()"
+      ></textregion>
+      <div style="padding-top: 15px;">
+        <button class="btn btn--accept" disabled onclick="submit()">
+          <%= lang === 'ar' ? 'تاكيد' : 'Submit' %>
+        </button>
+      </div>
+    </div>
+    <div
+      id="success"
+      style="display: none; padding: 60px 40px; background-color: rgb(70, 109, 70); border-radius: 10px; font-size: 24px; font-weight: bold; color: white; margin-top: 40px"
+    >
+      <%= lang === 'ar' ? 'تم ارسال التقييم بنجاح' : 'Your review submited
+      successfully' %>
+    </div>
+
+    <style>
+      #star-1:checked ~ section [for='star-1'] svg,
+      #star-2:checked ~ section [for='star-1'] svg,
+      #star-2:checked ~ section [for='star-2'] svg,
+      #star-3:checked ~ section [for='star-1'] svg,
+      #star-3:checked ~ section [for='star-2'] svg,
+      #star-3:checked ~ section [for='star-3'] svg,
+      #star-4:checked ~ section [for='star-1'] svg,
+      #star-4:checked ~ section [for='star-2'] svg,
+      #star-4:checked ~ section [for='star-3'] svg,
+      #star-4:checked ~ section [for='star-4'] svg,
+      #star-5:checked ~ section [for='star-1'] svg,
+      #star-5:checked ~ section [for='star-2'] svg,
+      #star-5:checked ~ section [for='star-3'] svg,
+      #star-5:checked ~ section [for='star-4'] svg,
+      #star-5:checked ~ section [for='star-5'] svg {
+        transform: scale(1);
+      }
+
+      #star-1:checked ~ section [for='star-1'] svg path,
+      #star-2:checked ~ section [for='star-1'] svg path,
+      #star-2:checked ~ section [for='star-2'] svg path,
+      #star-3:checked ~ section [for='star-1'] svg path,
+      #star-3:checked ~ section [for='star-2'] svg path,
+      #star-3:checked ~ section [for='star-3'] svg path,
+      #star-4:checked ~ section [for='star-1'] svg path,
+      #star-4:checked ~ section [for='star-2'] svg path,
+      #star-4:checked ~ section [for='star-3'] svg path,
+      #star-4:checked ~ section [for='star-4'] svg path,
+      #star-5:checked ~ section [for='star-1'] svg path,
+      #star-5:checked ~ section [for='star-2'] svg path,
+      #star-5:checked ~ section [for='star-3'] svg path,
+      #star-5:checked ~ section [for='star-4'] svg path,
+      #star-5:checked ~ section [for='star-5'] svg path {
+        fill: #ffbb00;
+        stroke: #cc9600;
+      }
+
+      .btn--accept {
+        background-color: #427cfc;
+        color: #ffffff;
+      }
+
+      .btn--accept:hover,
+      .btn--accept:active,
+      .btn--accept:focus {
+        background-color: #5085fa;
+      }
+
+      .btn--accept:disabled {
+        background-color: #94a8d4;
+      }
+
+      section {
+        width: 300px;
+        text-align: center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate3d(-50%, -50%, 0);
+      }
+
+      label {
+        display: inline-block;
+        width: 50px;
+        text-align: center;
+        cursor: pointer;
+      }
+
+      label svg {
+        width: 100%;
+        height: auto;
+        fill: white;
+        stroke: #ccc;
+        transform: scale(0.8);
+        transition: transform 200ms ease-in-out;
+      }
+
+      label svg path {
+        transition: fill 200ms ease-in-out, stroke 100ms ease-in-out;
+      }
+
+      label[for='star-null'] {
+        display: block;
+        margin: 0 auto;
+        color: #999;
+      }
+
+      body {
+        text-align: center;
+        background: #f0f0f0;
+      }
+
+      input {
+        margin-top: 1rem;
+      }
+
+      .btn {
+        border: 0;
+        border-radius: 5px;
+        padding: 12px 40px;
+        margin: 0 20px;
+        box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
+        font-family: inherit;
+        font-size: 1em;
+        cursor: pointer;
+        transition: all 0.4s ease 0s;
+      }
+
+      .btn:hover {
+        -webkit-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);
+        -moz-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);
+        box-shadow: 5px 40px -10px rgba(0, 0, 0, 0.57);
+        transition: all 0.4s ease 0s;
+      }
+    </style>
+  </body>
+</html>

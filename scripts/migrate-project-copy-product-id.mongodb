@@ -1,0 +1,94 @@
+// MongoDB Migration Script: Add productId to projectCopy records
+// 
+// Run this script in your MongoDB shell or client (like MongoDB Compass, Studio 3T, or mongosh)
+// 
+// Usage:
+//   1. Connect to your MongoDB database
+//   2. Select the correct database (e.g., "use marketing" or "use test")
+//   3. Run this script
+
+// First, let's check how many records need updating
+print("=== Checking projectCopy records without productId ===");
+var countWithoutProductId = db.projectCopy.countDocuments({ productId: { $exists: false } });
+print("Records without productId: " + countWithoutProductId);
+
+if (countWithoutProductId === 0) {
+    print("No records need updating. Migration complete!");
+} else {
+    print("\n=== Starting migration ===");
+    
+    var updatedCount = 0;
+    var skippedCount = 0;
+    var errorCount = 0;
+    
+    // Find all projectCopy records without productId
+    db.projectCopy.find({ productId: { $exists: false } }).forEach(function(projectCopy) {
+        try {
+            // Find the associated brandMessage
+            var brandMessage = db.brandMessage.findOne({ _id: projectCopy.brandMessageId });
+            
+            if (!brandMessage) {
+                print("WARNING: No brandMessage found for projectCopy " + projectCopy._id);
+                skippedCount++;
+                return;
+            }
+            
+            if (!brandMessage.productId) {
+                print("WARNING: BrandMessage " + brandMessage._id + " has no productId");
+                skippedCount++;
+                return;
+            }
+            
+            // Update the projectCopy with productId from brandMessage
+            var result = db.projectCopy.updateOne(
+                { _id: projectCopy._id },
+                { 
+                    $set: { 
+                        productId: brandMessage.productId,
+                        updatedAt: new Date()
+                    }
+                }
+            );
+            
+            if (result.modifiedCount > 0) {
+                updatedCount++;
+                print("✓ Updated projectCopy " + projectCopy._id + " with productId " + brandMessage.productId);
+            } else {
+                print("ERROR: Failed to update projectCopy " + projectCopy._id);
+                errorCount++;
+            }
+            
+        } catch (error) {
+            print("ERROR processing projectCopy " + projectCopy._id + ": " + error);
+            errorCount++;
+        }
+    });
+    
+    print("\n=== Migration Summary ===");
+    print("Successfully updated: " + updatedCount + " records");
+    print("Skipped (no productId): " + skippedCount + " records");
+    print("Errors: " + errorCount + " records");
+    print("Total processed: " + (updatedCount + skippedCount + errorCount) + " records");
+    
+    // Verify the migration
+    var remaining = db.projectCopy.countDocuments({ productId: { $exists: false } });
+    print("\n=== Verification ===");
+    print("Records still without productId: " + remaining);
+    
+    if (remaining === 0) {
+        print("✓ Migration completed successfully!");
+    } else {
+        print("⚠ Some records were not migrated. Please check the warnings above.");
+    }
+}
+
+// Optional: Show a sample of the updated records
+print("\n=== Sample of updated records ===");
+db.projectCopy.find({ productId: { $exists: true } }).limit(3).forEach(function(doc) {
+    print("ProjectCopy ID: " + doc._id);
+    print("  ProductId: " + doc.productId);
+    print("  BrandMessageId: " + doc.brandMessageId);
+    print("  Platform: " + doc.platform);
+    print("  CopyType: " + doc.copyType);
+    print("---");
+});

@@ -1,0 +1,1 @@
+import{j as t,C as r}from"./index-uk0DGF3U.js";import{O as i}from"./OpenRateStats-C8mKX0ol.js";import"./ThemeIcon-BKw59M5e.js";import"./Select-BjL1v5CD.js";import"./Tooltip-uOLE1Pb0.js";import"./Grid-DQjyBqmC.js";import"./SegmentedControl-DqM8bzW-.js";import"./get-env-uyVen0u2.js";const l=()=>t.jsx(r,{size:"xl",py:"md",children:t.jsx(i,{isVisible:!0})});export{l as default};

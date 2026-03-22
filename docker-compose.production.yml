@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  app:
+    image: ghcr.io/smartlabtech/community.2zpoint:latest
+    container_name: email-client-app
+    ports:
+      - '${PORT:-3041}:3041'
+    environment:
+      NODE_ENV: production
+      PORT: 3041
+      DB_URI: '${DB_URI}'
+      JWT_SECRET: '${JWT_SECRET}'
+      JWT_EXPIRES_IN: '${JWT_EXPIRES_IN:-7d}'
+      MAX_REQUEST_SIZE: '${MAX_REQUEST_SIZE:-50mb}'
+      MAX_CONTENT_CHARS: '${MAX_CONTENT_CHARS:-80000}'
+      # Payment Gateway - Ziina
+      ZIINA_API_URL: '${ZIINA_API_URL}'
+      ZIINA_ACCESS_TOKEN: '${ZIINA_ACCESS_TOKEN}'
+      ZIINA_WEBHOOK_SECRET: '${ZIINA_WEBHOOK_SECRET}'
+      # App URL for payment callbacks
+      APP_URL: '${APP_URL}'
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - '-f'
+        - 'http://localhost:3041/api'
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - proxy-network
+    volumes:
+      - 'app_data:/app/data'
+      - 'app_logs:/app/logs'
+      - 'app_uploads:/app/uploads'
+
+networks:
+  proxy-network:
+    external: true
+
+volumes:
+  app_data:
+    driver: local
+  app_logs:
+    driver: local
+  app_uploads:
+    driver: local

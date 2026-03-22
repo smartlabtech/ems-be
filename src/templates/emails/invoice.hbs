@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice #{{invoiceNumber}} - BrandBanda</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        .invoice-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .invoice-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            position: relative;
+        }
+        .invoice-header::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: white;
+            border-radius: 20px 20px 0 0;
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        .logo-section h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .invoice-number {
+            font-size: 18px;
+            opacity: 0.95;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+        .invoice-body {
+            padding: 40px;
+            background: white;
+        }
+        .invoice-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .meta-section h3 {
+            color: #667eea;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+        .meta-section p {
+            color: #495057;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .meta-section strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .items-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 30px 0;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+        .items-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .items-table th:last-child,
+        .items-table td:last-child {
+            text-align: right;
+        }
+        .items-table td {
+            padding: 20px 15px;
+            border-bottom: 1px solid #e9ecef;
+            background: white;
+            font-size: 15px;
+        }
+        .items-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        .item-description {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        .quantity-cell {
+            text-align: center !important;
+            font-weight: 600;
+        }
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+        .totals-table {
+            width: 350px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .totals-row:last-child {
+            border-bottom: none;
+        }
+        .totals-row.subtotal {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .totals-row.tax {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .totals-row.discount {
+            font-size: 14px;
+            color: #28a745;
+        }
+        .totals-row.total {
+            margin-top: 10px;
+            padding-top: 20px;
+            border-top: 2px solid #667eea;
+            font-size: 20px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        .payment-section {
+            text-align: center;
+            margin: 40px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
+            border-radius: 10px;
+        }
+        .payment-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+            transition: all 0.3s ease;
+        }
+        .payment-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(102,126,234,0.4);
+        }
+        .amount-due {
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 10px;
+        }
+        .notes-section {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 30px 0;
+        }
+        .notes-section h3 {
+            color: #f57c00;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .notes-section p {
+            color: #6c757d;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+        .footer-content {
+            color: #6c757d;
+            font-size: 13px;
+        }
+        .footer-brand {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .contact-info {
+            margin-top: 15px;
+        }
+        .contact-info a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .invoice-container {
+                box-shadow: none;
+            }
+            .payment-button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <div class="invoice-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1>BrandBanda</h1>
+                    <div class="invoice-number">Invoice #{{invoiceNumber}}</div>
+                </div>
+                <div class="status-badge">{{status}}</div>
+            </div>
+        </div>
+        
+        <div class="invoice-body">
+            <div class="invoice-meta">
+                <div class="meta-section">
+                    <h3>Bill To</h3>
+                    <p><strong>{{customerName}}</strong></p>
+                    <p>{{customerEmail}}</p>
+                    {{#if customerAddress}}
+                    <p>{{customerAddress}}</p>
+                    {{/if}}
+                    {{#if billingDetails}}
+                        {{#if billingDetails.phone}}<p>Phone: {{billingDetails.phone}}</p>{{/if}}
+                        {{#if billingDetails.city}}<p>{{billingDetails.city}}{{#if billingDetails.postalCode}}, {{billingDetails.postalCode}}{{/if}}</p>{{/if}}
+                        {{#if billingDetails.country}}<p>{{billingDetails.country}}</p>{{/if}}
+                    {{/if}}
+                </div>
+                <div class="meta-section">
+                    <h3>Invoice Details</h3>
+                    <p><strong>Invoice Date:</strong> {{invoiceDate}}</p>
+                    <p><strong>Due Date:</strong> {{dueDate}}</p>
+                    <p><strong>Currency:</strong> {{currency}}</p>
+                    {{#if orderId}}<p><strong>Order ID:</strong> {{orderId}}</p>{{/if}}
+                    {{#if subscriptionId}}<p><strong>Subscription:</strong> Active</p>{{/if}}
+                </div>
+            </div>
+            
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50%;">Description</th>
+                        <th style="width: 15%; text-align: center;">Quantity</th>
+                        <th style="width: 17.5%;">Unit Price</th>
+                        <th style="width: 17.5%;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each items}}
+                    <tr>
+                        <td class="item-description">{{description}}</td>
+                        <td class="quantity-cell">{{quantity}}</td>
+                        <td>{{../currency}} {{unitPrice}}</td>
+                        <td>{{../currency}} {{amount}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            
+            <div class="totals-section">
+                <div class="totals-table">
+                    <div class="totals-row subtotal">
+                        <span>Subtotal</span>
+                        <span>{{currency}} {{subtotal}}</span>
+                    </div>
+                    {{#if tax}}
+                    <div class="totals-row tax">
+                        <span>VAT ({{taxRate}}%)</span>
+                        <span>{{currency}} {{tax}}</span>
+                    </div>
+                    {{/if}}
+                    {{#if discount}}
+                    <div class="totals-row discount">
+                        <span>Discount{{#if discountDescription}} ({{discountDescription}}){{/if}}</span>
+                        <span>-{{currency}} {{discount}}</span>
+                    </div>
+                    {{/if}}
+                    <div class="totals-row total">
+                        <span>Total</span>
+                        <span>{{currency}} {{total}}</span>
+                    </div>
+                </div>
+            </div>
+            
+            {{#if paymentUrl}}
+            <div class="payment-section">
+                <a href="{{paymentUrl}}" class="payment-button">Pay Invoice Now</a>
+                {{#if amountDue}}
+                <div class="amount-due">Amount Due: {{currency}} {{amountDue}}</div>
+                {{/if}}
+            </div>
+            {{/if}}
+            
+            {{#if notes}}
+            <div class="notes-section">
+                <h3>Important Notes</h3>
+                <p>{{notes}}</p>
+            </div>
+            {{/if}}
+            
+            {{#if termsAndConditions}}
+            <div class="notes-section">
+                <h3>Terms & Conditions</h3>
+                <p>{{termsAndConditions}}</p>
+            </div>
+            {{/if}}
+        </div>
+        
+        <div class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">BrandBanda - Professional Branding Solutions</div>
+                <p>Thank you for your business! We appreciate your trust in our services.</p>
+                <div class="contact-info">
+                    <p>Questions? Contact us at <a href="mailto:support@brandbanda.com">support@brandbanda.com</a></p>
+                    <p>© 2024 BrandBanda. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
